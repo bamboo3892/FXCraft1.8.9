@@ -1,0 +1,14 @@
+[
+{
+  "modid": "FXCraft",
+  "name": "FXCraft",
+  "description": "This is a mod, not a pen.",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Taketorino_Okina"],
+  "credits": "",
+  "logoFile": "logo.png",
+  "screenshots": []
+}
+]
