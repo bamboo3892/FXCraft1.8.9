@@ -2,8 +2,6 @@ package com.okina.fxcraft.client.gui.fxdealer;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.Lists;
 import com.okina.fxcraft.account.AccountInfo;
 import com.okina.fxcraft.account.FXPosition;
@@ -22,7 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class ChartTab extends GuiTab<FXDealerGui> {
 
@@ -197,6 +195,7 @@ public class ChartTab extends GuiTab<FXDealerGui> {
 	@Override
 	public void drawComponent(Minecraft minecraft, int mouseX, int mouseY) {
 		super.drawComponent(minecraft, mouseX, mouseY);
+		FontRenderer fontRenderer = minecraft.fontRendererObj;
 
 		AccountInfo account = gui.tile.getAccountInfo();
 		if(gui.tile.hasAccountUpdate(lastAccountUpdate)){
@@ -204,18 +203,26 @@ public class ChartTab extends GuiTab<FXDealerGui> {
 			lastAccountUpdate = System.currentTimeMillis();
 		}
 
-		FontRenderer fontRenderer = minecraft.fontRendererObj;
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_CULL_FACE);
-		GL11.glDepthMask(true);
-		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		GlStateManager.pushAttrib();
+		GlStateManager.disableBlend();
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableLighting();
+		GlStateManager.disableCull();
+		GlStateManager.enableDepth();
+		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+		GlStateManager.blendFunc(770, 771);
+		//		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		//		GL11.glEnable(GL11.GL_BLEND);
+		//		GL11.glDisable(GL11.GL_LIGHTING);
+		//		GL11.glDisable(GL11.GL_CULL_FACE);
+		//		GL11.glDepthMask(true);
+		//		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+
 		int left = (gui.width - gui.getSizeX()) / 2;
 		int right = (gui.width + gui.getSizeX()) / 2;
 		int up = (gui.height - gui.getSizeY()) / 2;
 		int down = (gui.height + gui.getSizeY()) / 2;
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.8F);
 
 		drawRect(left + 220, up + 25, left + 222, down - 3, 0x33000000);
 
@@ -277,7 +284,7 @@ public class ChartTab extends GuiTab<FXDealerGui> {
 			fontRenderer.drawString("Settle", left + 228, down - 45, 0xFFFFFF, false);
 		}
 		limitsTradeField.drawTextBox();
-		GL11.glPopAttrib();
+		GlStateManager.popAttrib();
 	}
 
 	public void updateAccount(AccountInfo account) {

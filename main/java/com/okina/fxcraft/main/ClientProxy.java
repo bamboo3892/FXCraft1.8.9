@@ -8,12 +8,10 @@ import java.util.Comparator;
 import com.okina.fxcraft.client.model.ModelFXMask;
 import com.okina.fxcraft.client.model.ModelJentleArmor;
 import com.okina.fxcraft.client.particle.ParticleGun;
-import com.okina.fxcraft.client.renderer.BlockAccountManagerRenderer;
 import com.okina.fxcraft.network.SimpleTilePacket;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy {
 
@@ -28,7 +26,6 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	protected void registerRenderer() {
-		RenderingRegistry.registerBlockHandler(new BlockAccountManagerRenderer());
 		modelJentlemensCap = new ModelJentleArmor(false);
 		modelJentlemensPanz = new ModelJentleArmor(true);
 		modelFXMask = new ModelFXMask();

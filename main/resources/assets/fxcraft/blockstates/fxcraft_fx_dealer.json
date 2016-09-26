@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "facing=down": { "model": "fxcraft:fxcraft_fx_dealer", "x": 90 },
+        "facing=up": { "model": "fxcraft:fxcraft_fx_dealer", "x": 270 },
+        "facing=north": { "model": "fxcraft:fxcraft_fx_dealer" },
+        "facing=south": { "model": "fxcraft:fxcraft_fx_dealer", "y": 180 },
+        "facing=west": { "model": "fxcraft:fxcraft_fx_dealer", "y": 270 },
+        "facing=east": { "model": "fxcraft:fxcraft_fx_dealer", "y": 90 }
+    }
+}

@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiTable<T extends GuiTableRow> extends GuiButton implements ITipComponent {
@@ -37,16 +37,16 @@ public class GuiTable<T extends GuiTableRow> extends GuiButton implements ITipCo
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
 		if(visible){
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			FontRenderer fontrenderer = minecraft.fontRendererObj;
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			int k = getHoverState(hovered);
-			GL11.glEnable(GL11.GL_BLEND);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+			GlStateManager.pushAttrib();
+			GlStateManager.enableBlend();
+			GL11.glEnable(GL11.GL_BLEND);
+			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+			GlStateManager.blendFunc(770, 771);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
 
 			for (int i = 0; i < row; i++){
 				drawRect(xPosition, yPosition + titleRow.sizeY * i, xPosition + width, yPosition + titleRow.sizeY * (i + 1), i % 2 == 0 ? 0x60000000 : 0x30000000);
@@ -73,7 +73,8 @@ public class GuiTable<T extends GuiTableRow> extends GuiButton implements ITipCo
 				drawRect(xPosition, yPosition + selectedRow * titleRow.sizeY, xPosition + width, yPosition + (selectedRow + 1) * titleRow.sizeY, 0x807fff00);
 			}
 
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			//			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			mouseDragged(minecraft, mouseX, mouseY);
 
@@ -84,7 +85,7 @@ public class GuiTable<T extends GuiTableRow> extends GuiButton implements ITipCo
 				}
 			}
 
-			GL11.glPopAttrib();
+			GlStateManager.popAttrib();
 		}
 	}
 

@@ -2,15 +2,13 @@ package com.okina.fxcraft.client.gui;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import com.okina.fxcraft.main.FXCraft;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -45,25 +43,31 @@ public class GuiIconLabel extends GuiButton implements ITipComponent {
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
 		if(visible){
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			FontRenderer fontRenderer = minecraft.fontRendererObj;
+			GlStateManager.pushAttrib();
 			minecraft.getTextureManager().bindTexture(TEXTURE);
-			GL11.glEnable(GL11.GL_BLEND);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.enableBlend();
+			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+			GlStateManager.blendFunc(770, 771);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			//			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			//			minecraft.getTextureManager().bindTexture(TEXTURE);
+			//			GL11.glEnable(GL11.GL_BLEND);
+			//			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+			//			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			//			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if(!isItem){
 				drawTexturedModalRect(xPosition, yPosition, textureX, textureY, width, height);
 			}else{
-				renderItem.renderItemAndEffectIntoGUI(fontRenderer, minecraft.getTextureManager(), item, xPosition, yPosition);
-				renderItem.renderItemOverlayIntoGUI(fontRenderer, minecraft.getTextureManager(), item, xPosition, yPosition);
+				FontRenderer fontRenderer = minecraft.fontRendererObj;
+				renderItem.renderItemAndEffectIntoGUI(item, xPosition, yPosition);
+				renderItem.renderItemOverlayIntoGUI(fontRenderer, item, xPosition, yPosition, null);
 			}
 
 			mouseDragged(minecraft, mouseX, mouseY);
 
-			GL11.glPopAttrib();
+			GlStateManager.popAttrib();
+			//			GL11.glPopAttrib();
 		}
 	}
 

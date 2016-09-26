@@ -14,8 +14,6 @@ import com.okina.fxcraft.utils.ColoredString;
 import com.okina.fxcraft.utils.RenderingHelper;
 import com.okina.fxcraft.utils.UtilMethods;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,17 +23,20 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemCapitalistGun extends Item implements IToolTipUser, IHUDItem {
 
 	public static final int LotToShot = 10;
 
 	public ItemCapitalistGun() {
-		setTextureName(FXCraft.MODID + ":capitalist_gun");
 		setUnlocalizedName("fxcraft_capitalist_gun");
 		setCreativeTab(FXCraft.FXCraftCreativeTab);
 		setMaxStackSize(1);
@@ -57,8 +58,8 @@ public class ItemCapitalistGun extends Item implements IToolTipUser, IHUDItem {
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof IAccountInfoContainer){
 			AccountInfo account = ((IAccountInfoContainer) tile).getAccountInfo();
 			if(account != null){
@@ -105,9 +106,9 @@ public class ItemCapitalistGun extends Item implements IToolTipUser, IHUDItem {
 						player.cameraPitch -= f;
 						player.rotationPitch -= f * 0.5f;
 						Vec3 vec = player.getLookVec();
-						Vec3 v = vec.crossProduct(Vec3.createVectorHelper(0, 1, 0));
+						Vec3 v = vec.crossProduct(new Vec3(0, 1, 0));
 						double x = player.posX + v.xCoord * 0.1;
-						double y = player.posY + player.getDefaultEyeHeight() - 0.15;
+						double y = player.posY + player.getEyeHeight() - 0.05;
 						double z = player.posZ + v.zCoord * 0.1;
 						FXCraft.proxy.spawnParticle(world, FXCraft.PARTICLE_GUN, x, y, z, vec.xCoord, vec.yCoord, vec.zCoord);
 					}

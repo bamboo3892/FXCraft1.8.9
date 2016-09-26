@@ -3,7 +3,6 @@ package com.okina.fxcraft.main;
 import static com.okina.fxcraft.main.FXCraft.*;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import com.okina.fxcraft.client.IHUDArmor;
 import com.okina.fxcraft.client.IHUDBlock;
@@ -15,9 +14,10 @@ import com.okina.fxcraft.utils.UtilMethods;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -35,6 +35,7 @@ import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 
 public class EventHandler {
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void toolTip(ItemTooltipEvent event) {
 		Item item = event.itemStack.getItem();
@@ -174,36 +175,47 @@ public class EventHandler {
 			}
 
 			//popup
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glDisable(GL11.GL_LIGHTING);
-			GL11.glDisable(GL11.GL_CULL_FACE);
-			GL11.glDepthMask(true);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+			Tessellator tessellator = Tessellator.getInstance();
+			WorldRenderer wordRenderer = Tessellator.getInstance().getWorldRenderer();
+			FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+
+			GlStateManager.pushAttrib();
+			GlStateManager.enableBlend();
+			GlStateManager.disableLighting();
+			GlStateManager.disableCull();
+			GlStateManager.depthMask(true);
+			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+			GlStateManager.blendFunc(770, 771);
+			//			GL11.glEnable(GL11.GL_BLEND);
+			//			GL11.glDisable(GL11.GL_LIGHTING);
+			//			GL11.glDisable(GL11.GL_CULL_FACE);
+			//			GL11.glDepthMask(true);
+			//			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+
 			for (PopUpMessage msg : FXCraft.proxy.messageList){
 				if(msg.liveTime >= 0){
 					int offsetX = msg.liveTime <= 10 ? 10 - msg.liveTime : 0;
 					float alpha = msg.liveTime <= 10 ? (msg.liveTime / 10f) + 0.1f : 1.0F;
+					int size = fontRenderer.getStringWidth(msg.message);
 					if(alpha > 1f){
 						alpha = 1f;
 					}
-					GL11.glDisable(GL11.GL_TEXTURE_2D);
-					Tessellator tessellator = Tessellator.instance;
-					WorldRenderer wordRenderer = Tessellator.getInstance().getWorldRenderer();
-					FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-					int size = fontRenderer.getStringWidth(msg.message);
-					GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.5F);
-					tessellator.startDrawingQuads();
-					tessellator.addVertex(29 + offsetX, 72 + msg.index * 10, 0);
-					tessellator.addVertex(31 + size + offsetX, 72 + msg.index * 10, 0);
-					tessellator.addVertex(31 + size + offsetX, 72 + (msg.index + 1) * 10, 0);
-					tessellator.addVertex(29 + offsetX, 72 + (msg.index + 1) * 10, 0);
+					GlStateManager.disableTexture2D();
+					GlStateManager.color(0.0F, 0.0F, 0.0F, 0.5F);
+					wordRenderer.begin(7, DefaultVertexFormats.POSITION);
+					wordRenderer.pos(29 + offsetX, 72 + msg.index * 10, 0).endVertex();
+					wordRenderer.pos(29 + offsetX, 72 + (msg.index + 1) * 10, 0).endVertex();
+					wordRenderer.pos(31 + size + offsetX, 72 + (msg.index + 1) * 10, 0).endVertex();
+					wordRenderer.pos(31 + size + offsetX, 72 + msg.index * 10, 0).endVertex();
 					tessellator.draw();
-					GL11.glEnable(GL11.GL_TEXTURE_2D);
+					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+					GlStateManager.enableTexture2D();
 					fontRenderer.drawString(msg.message, 30 + offsetX, 73 + msg.index * 10, 0x7cfc00, false);
 				}
 			}
-			GL11.glPopAttrib();
+
+			GlStateManager.enableLighting();
+			GlStateManager.popAttrib();
 		}
 		pastRenderedObject = null;
 		pastMOP = null;

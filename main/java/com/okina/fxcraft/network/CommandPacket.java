@@ -6,7 +6,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -60,7 +59,7 @@ public class CommandPacket implements IMessage {
 					FXCraft.proxy.appendPopUp(msg.value);
 				}else if("gun".equals(msg.command)){
 					try{
-						IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+						IThreadListener mainThread = Minecraft.getMinecraft();
 						mainThread.addScheduledTask(new Runnable() {
 							@Override
 							public void run() {

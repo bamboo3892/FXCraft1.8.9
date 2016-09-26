@@ -21,36 +21,33 @@ import net.minecraft.world.World;
 
 public class UtilMethods {
 
-	/**pTrue ??? */
-	public static MovingObjectPosition getMovingObjectPositionFromPlayer(World world, EntityPlayer player, boolean pTrue) {
-		float f = 1.0F;
-		float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f;
-		float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f;
-		double entityPosX = player.prevPosX + (player.posX - player.prevPosX) * f;
-		double entityPosY = player.prevPosY + (player.posY - player.prevPosY) * f + (world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
-		double entityPosZ = player.prevPosZ + (player.posZ - player.prevPosZ) * f;
-		Vec3 entityPos = new Vec3(entityPosX, entityPosY, entityPosZ);
-		float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
-		float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
-		float f5 = -MathHelper.cos(-f1 * 0.017453292F);
-		float f6 = MathHelper.sin(-f1 * 0.017453292F);
-		float f7 = f4 * f5;
-		float f8 = f3 * f5;
-		double radius = 5.0D;
-		if(player instanceof EntityPlayerMP){
-			radius = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
+	public static MovingObjectPosition getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids) {
+		float f = playerIn.rotationPitch;
+		float f1 = playerIn.rotationYaw;
+		double d0 = playerIn.posX;
+		double d1 = playerIn.posY + (double) playerIn.getEyeHeight();
+		double d2 = playerIn.posZ;
+		Vec3 vec3 = new Vec3(d0, d1, d2);
+		float f2 = MathHelper.cos(-f1 * 0.017453292F - (float) Math.PI);
+		float f3 = MathHelper.sin(-f1 * 0.017453292F - (float) Math.PI);
+		float f4 = -MathHelper.cos(-f * 0.017453292F);
+		float f5 = MathHelper.sin(-f * 0.017453292F);
+		float f6 = f3 * f4;
+		float f7 = f2 * f4;
+		double d3 = 5.0D;
+		if(playerIn instanceof EntityPlayerMP){
+			d3 = ((EntityPlayerMP) playerIn).theItemInWorldManager.getBlockReachDistance();
 		}
-		Vec3 endPos = entityPos.addVector(f7 * radius, f6 * radius, f8 * radius);
-		return world.rayTraceBlocks(entityPos, endPos, pTrue, !pTrue, false);
+		Vec3 vec31 = vec3.addVector((double) f6 * d3, (double) f5 * d3, (double) f7 * d3);
+		return worldIn.rayTraceBlocks(vec3, vec31, useLiquids, !useLiquids, false);
 	}
 
 	public static Entity getCollidedEntityFromEntity(World world, EntityPlayer player, double radius) {
-		float f = 1.0F;
-		float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f;
-		float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f;
-		double entityPosX = player.prevPosX + (player.posX - player.prevPosX) * f;
-		double entityPosY = player.prevPosY + (player.posY - player.prevPosY) * f + (world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
-		double entityPosZ = player.prevPosZ + (player.posZ - player.prevPosZ) * f;
+		float f1 = player.rotationPitch;
+		float f2 = player.rotationYaw;
+		double entityPosX = player.posX;
+		double entityPosY = player.posY + (double) player.getEyeHeight();
+		double entityPosZ = player.posZ;
 		Vec3 startPos = new Vec3(entityPosX, entityPosY, entityPosZ);
 		float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
 		float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
@@ -59,7 +56,7 @@ public class UtilMethods {
 		float f7 = f4 * f5;
 		float f8 = f3 * f5;
 		Vec3 endPos = startPos.addVector(f7 * radius, f6 * radius, f8 * radius);
-		Vec3 vec = startPos.subtract(endPos);
+		Vec3 vec = endPos.subtract(startPos);
 
 		float gap = 0.05f;
 		int count = (int) (radius / gap);
@@ -67,7 +64,7 @@ public class UtilMethods {
 			float dist = i * gap;
 			Vec3 point = startPos.addVector(vec.xCoord * dist, vec.yCoord * dist, vec.zCoord * dist);
 			for (int j = 0; j < world.loadedEntityList.size(); j++){
-				Entity e = (Entity) world.loadedEntityList.get(j);
+				Entity e = world.loadedEntityList.get(j);
 				if(e != player && isEntiyOnPoint(e, point)){
 					return e;
 				}
@@ -77,7 +74,7 @@ public class UtilMethods {
 	}
 
 	public static boolean isEntiyOnPoint(Entity entity, Vec3 point) {
-		AxisAlignedBB box = entity.getCollisionBoundingBox();
+		AxisAlignedBB box = entity.getEntityBoundingBox();
 		return box.minX < point.xCoord && box.maxX > point.xCoord && box.minY < point.yCoord && box.maxY > point.yCoord && box.minZ < point.zCoord && box.maxZ > point.zCoord;
 	}
 

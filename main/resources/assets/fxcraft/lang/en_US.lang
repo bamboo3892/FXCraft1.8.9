@@ -1,7 +1,8 @@
-itemGroup.fxcraftCreativeTab=FXCraft
+﻿itemGroup.fxcraftCreativeTab=FXCraft
 
 tile.fxcraft_account_manager.name=Account Maneger
 tile.fxcraft_fx_dealer.name=FX Dealer
+tile.eternal_storage.name=Eternal Storage
 
 item.fxcraft_iphone.name=iPhone
 item.fxcraft_jentlemens_cap.name=Jentlemens Cap

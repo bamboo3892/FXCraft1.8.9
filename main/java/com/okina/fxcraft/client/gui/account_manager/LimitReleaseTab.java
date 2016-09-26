@@ -2,8 +2,6 @@ package com.okina.fxcraft.client.gui.account_manager;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.Lists;
 import com.okina.fxcraft.account.AccountInfo;
 import com.okina.fxcraft.account.FXDealLimit;
@@ -15,13 +13,9 @@ import com.okina.fxcraft.main.FXCraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 public class LimitReleaseTab extends GuiTab<AccountManagerGui> {
-
-	private final static ResourceLocation TEXTURE = new ResourceLocation(FXCraft.MODID + ":textures/gui/container/icon_labels.png");
 
 	private List<GuiButton> list = Lists.newArrayList();
 	private GuiIconLabel labelLimitLimits;
@@ -46,13 +40,13 @@ public class LimitReleaseTab extends GuiTab<AccountManagerGui> {
 
 	@Override
 	public void drawComponent(Minecraft minecraft, int mouseX, int mouseY) {
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		FontRenderer fontRenderer = minecraft.fontRendererObj;
-		minecraft.getTextureManager().bindTexture(TEXTURE);
-		GL11.glEnable(GL11.GL_BLEND);
-		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+		//		GlStateManager.pushAttrib();
+		//		GL11.glEnable(GL11.GL_BLEND);
+		//		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		//		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		//		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		AccountInfo info = gui.tile.getAccountInfo();
 		if(gui.tile.hasAccountUpdate(lastAccountUpdate)){
@@ -70,7 +64,7 @@ public class LimitReleaseTab extends GuiTab<AccountManagerGui> {
 		str = "Now " + (info == null ? "" : (info.limitsTradePermission ? "o" : "x"));
 		fontRenderer.drawString(str, i + 146, j + 42, 0xffffff, false);
 
-		GL11.glPopAttrib();
+		//		GlStateManager.popAttrib();
 	}
 
 	@Override

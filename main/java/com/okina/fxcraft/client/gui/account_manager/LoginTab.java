@@ -39,6 +39,8 @@ public class LoginTab extends GuiTab<AccountManagerGui> {
 
 	@Override
 	public void drawComponent(Minecraft minecraft, int mouseX, int mouseY) {
+		//		GlStateManager.pushAttrib();
+
 		int i = (gui.width - gui.getSizeX()) / 2;
 		int j = (gui.height - gui.getSizeY()) / 2;
 		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
@@ -48,6 +50,8 @@ public class LoginTab extends GuiTab<AccountManagerGui> {
 		fontRenderer.drawString("Password", i, j + 75, 0xffffff, false);
 		nameField.drawTextBox();
 		passwordField.drawTextBox();
+
+		//		GlStateManager.popAttrib();
 	}
 
 	@Override

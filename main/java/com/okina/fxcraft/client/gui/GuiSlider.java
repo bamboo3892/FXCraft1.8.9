@@ -8,7 +8,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public class GuiSlider extends GuiButton {
 
@@ -31,31 +34,31 @@ public class GuiSlider extends GuiButton {
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
 		if(visible){
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			FontRenderer fontrenderer = minecraft.fontRendererObj;
 			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			int k = getHoverState(hovered);
+
+			GlStateManager.pushAttrib();
+			GlStateManager.enableBlend();
 			GL11.glEnable(GL11.GL_BLEND);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+			GlStateManager.blendFunc(770, 771);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
 
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
-
+			GlStateManager.disableTexture2D();
 			drawRect(xPosition, yPosition, xPosition + width, yPosition + height, 0x73000000);
 
 			if(k == 0){//disabled
-
 			}else if(nowClicked){
 				if(dragStartX <= xPosition + 10){
 					drawRect(xPosition + 1, yPosition + 1, xPosition + 9, yPosition + height - 1, 0x33000000);
 				}else if(dragStartX >= xPosition + width - 10){
-					drawRect(xPosition + width - 9, yPosition + 1, xPosition + width - 1, yPosition + height - 1, 0x33000000);
+					drawRectangle(xPosition + width - 9, yPosition + 1, xPosition + width - 1, yPosition + height - 1, 0x33000000);
 				}else{
 					drawRect(xPosition + 11, yPosition + 1, xPosition + width - 11, yPosition + height - 1, 0x33000000);
 				}
 			}else{
 				if(k == 1){//enabled, not hovering
-
 				}else{//enabled, hovering
 					if(mouseX <= xPosition + 10){
 						drawRect(xPosition, yPosition, xPosition + 10, yPosition + height, 0x33000000);
@@ -66,7 +69,7 @@ public class GuiSlider extends GuiButton {
 					}
 				}
 			}
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
 			mouseDragged(minecraft, mouseX, mouseY);
 
@@ -78,9 +81,11 @@ public class GuiSlider extends GuiButton {
 			}
 			color = 0xFFFFFF;
 			String str = String.valueOf(value + dragValue);
-			fontrenderer.drawString(str, xPosition + width / 2 - fontrenderer.getStringWidth(str) / 2, yPosition + (height - 8) / 2, color, false);
 
-			GL11.glPopAttrib();
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.enableTexture2D();
+			fontrenderer.drawString(str, xPosition + width / 2 - fontrenderer.getStringWidth(str) / 2, yPosition + (height - 8) / 2, color, false);
+			GlStateManager.popAttrib();
 		}
 	}
 
@@ -161,6 +166,33 @@ public class GuiSlider extends GuiButton {
 	}
 
 	@Override
-	public void playPressSound(SoundHandler p_146113_1_) {}
+	public void playPressSound(SoundHandler soundHandler) {}
+
+	public static void drawRectangle(int left, int top, int right, int bottom, int color) {
+		if(left < right){
+			int i = left;
+			left = right;
+			right = i;
+		}
+		if(top < bottom){
+			int j = top;
+			top = bottom;
+			bottom = j;
+		}
+
+		float alpha = (color >> 24 & 255) / 255.0F;
+		float red = (color >> 16 & 255) / 255.0F;
+		float green = (color >> 8 & 255) / 255.0F;
+		float blue = (color & 255) / 255.0F;
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+		GlStateManager.color(red, green, blue, alpha);
+		worldrenderer.begin(7, DefaultVertexFormats.POSITION);
+		worldrenderer.pos(left, bottom, 0.0D).endVertex();
+		worldrenderer.pos(right, bottom, 0.0D).endVertex();
+		worldrenderer.pos(right, top, 0.0D).endVertex();
+		worldrenderer.pos(left, top, 0.0D).endVertex();
+		tessellator.draw();
+	}
 
 }

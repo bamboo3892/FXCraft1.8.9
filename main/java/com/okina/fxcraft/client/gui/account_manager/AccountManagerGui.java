@@ -3,8 +3,6 @@ package com.okina.fxcraft.client.gui.account_manager;
 import java.io.IOException;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.Lists;
 import com.okina.fxcraft.client.gui.GuiTab;
 import com.okina.fxcraft.client.gui.GuiTabbedPane;
@@ -13,7 +11,7 @@ import com.okina.fxcraft.main.FXCraft;
 import com.okina.fxcraft.tileentity.AccountManegerTileEntity;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
@@ -59,8 +57,8 @@ public class AccountManagerGui extends GuiTabbedPane {
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {}
 
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float p_73863_3_) {
-		super.drawScreen(mouseX, mouseY, p_73863_3_);
+	public void drawScreen(int mouseX, int mouseY, float pertialTicks) {
+		super.drawScreen(mouseX, mouseY, pertialTicks);
 		List<String> list = Lists.newArrayList();
 		for (Object object : buttonList){
 			if(object instanceof ITipComponent && object instanceof GuiButton){
@@ -77,23 +75,34 @@ public class AccountManagerGui extends GuiTabbedPane {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialRenderTick, int mouseX, int mouseY) {
+
 		mc.getTextureManager().bindTexture(TEXTURE_INVENTORY);
 		int x1 = (width - TEXTURE_X_SIZE1) / 2;
 		int y1 = (height - TEXTURE_Y_SIZE1) / 2;
 		drawTexturedModalRect(x1, y1 + 58, 0, 0, TEXTURE_X_SIZE1, TEXTURE_Y_SIZE1);
 
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_CULL_FACE);
-		GL11.glDepthMask(true);
-		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		GlStateManager.pushAttrib();
+		GlStateManager.enableBlend();
+		GlStateManager.disableLighting();
+		GlStateManager.disableCull();
+		GlStateManager.depthMask(true);
+		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+		GlStateManager.blendFunc(770, 771);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.8F);
+
+		//		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		//		GL11.glEnable(GL11.GL_BLEND);
+		//		GL11.glDisable(GL11.GL_LIGHTING);
+		//		GL11.glDisable(GL11.GL_CULL_FACE);
+		//		GL11.glDepthMask(true);
+		//		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		//		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
 		mc.getTextureManager().bindTexture(TEXTURE_MAIN);
 		int x2 = (width - TEXTURE_X_SIZE2) / 2;
 		int y2 = (height - TEXTURE_Y_SIZE2) / 2;
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
 		drawTexturedModalRect(x2, y2 - 18, 0, 0, TEXTURE_X_SIZE2, TEXTURE_Y_SIZE2);
-		GL11.glPopAttrib();
+		GlStateManager.popAttrib();
+		//		GL11.glPopAttrib();
 	}
 
 	@Override

@@ -3,8 +3,6 @@ package com.okina.fxcraft.client.gui.fxdealer;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.Lists;
 import com.okina.fxcraft.account.AccountInfo;
 import com.okina.fxcraft.account.FXPosition;
@@ -24,7 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class PositionTab extends GuiTab<FXDealerGui> {
 
@@ -230,19 +228,28 @@ public class PositionTab extends GuiTab<FXDealerGui> {
 		}
 
 		FontRenderer fontRenderer = minecraft.fontRendererObj;
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_CULL_FACE);
-		GL11.glDepthMask(true);
-		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+
+		GlStateManager.pushAttrib();
+		GlStateManager.enableBlend();
+		GlStateManager.disableLighting();
+		GlStateManager.disableCull();
+		GlStateManager.depthMask(true);
+		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+		GlStateManager.blendFunc(770, 771);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.8F);
+		//		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		//		GL11.glEnable(GL11.GL_BLEND);
+		//		GL11.glDisable(GL11.GL_LIGHTING);
+		//		GL11.glDisable(GL11.GL_CULL_FACE);
+		//		GL11.glDepthMask(true);
+		//		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		//		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
+
 		int left = (gui.width - gui.getSizeX()) / 2;
 		int right = (gui.width + gui.getSizeX()) / 2;
 		int up = (gui.height - gui.getSizeY()) / 2;
 		int down = (gui.height + gui.getSizeY()) / 2;
 		AccountInfo login = gui.tile.getAccountInfo();
-
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
 
 		drawRect(left + 85, up + 25, left + 87, down - 3, 0x33000000);
 
@@ -454,7 +461,9 @@ public class PositionTab extends GuiTab<FXDealerGui> {
 		}
 
 		limitsTradeField.drawTextBox();
-		GL11.glPopAttrib();
+
+		GlStateManager.popAttrib();
+		//		GL11.glPopAttrib();
 	}
 
 	public void updateAccount(AccountInfo account) {

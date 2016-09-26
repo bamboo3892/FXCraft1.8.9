@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "fxcraft:blocks/fx_block",
+        "down": "fxcraft:blocks/fx_block",
+        "up": "fxcraft:blocks/fx_block",
+        "north": "fxcraft:blocks/account_manager",
+        "south": "fxcraft:blocks/fx_block_back",
+        "west": "fxcraft:blocks/fx_block",
+        "east": "fxcraft:blocks/fx_block"
+    }
+}

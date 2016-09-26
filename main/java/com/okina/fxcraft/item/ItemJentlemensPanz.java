@@ -7,8 +7,6 @@ import com.okina.fxcraft.client.model.ModelJentleArmor;
 import com.okina.fxcraft.main.ClientProxy;
 import com.okina.fxcraft.main.FXCraft;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,6 +16,8 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemJentlemensPanz extends ItemArmor implements IToolTipUser {
 
@@ -25,7 +25,6 @@ public class ItemJentlemensPanz extends ItemArmor implements IToolTipUser {
 		super(material, renderId, 2);
 		setMaxStackSize(1);
 		setCreativeTab(FXCraft.FXCraftCreativeTab);
-		setTextureName(FXCraft.MODID + ":jentlemens_cap");
 		setUnlocalizedName("fxcraft_jentlemens_panz");
 	}
 
@@ -64,9 +63,9 @@ public class ItemJentlemensPanz extends ItemArmor implements IToolTipUser {
 				armorModel.heldItemRight = 1;
 				if(player.getItemInUseCount() > 0){
 					EnumAction enumaction = held_item.getItemUseAction();
-					if(enumaction == EnumAction.bow){
+					if(enumaction == EnumAction.BOW){
 						armorModel.aimedBow = true;
-					}else if(enumaction == EnumAction.block){
+					}else if(enumaction == EnumAction.BLOCK){
 						armorModel.heldItemRight = 3;
 					}
 				}

@@ -16,8 +16,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiFXChart extends GuiButton {
@@ -56,18 +58,23 @@ public class GuiFXChart extends GuiButton {
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
 		if(visible){
+			FontRenderer fontrenderer = minecraft.fontRendererObj;
 			double effWidth = width - 30;
 			double effHeight = height - 10;
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			Tessellator tessellator = Tessellator.instance;
-			FontRenderer fontrenderer = minecraft.fontRendererObj;
 			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			int k = getHoverState(hovered);
-			GL11.glEnable(GL11.GL_BLEND);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
+			GlStateManager.pushAttrib();
+			GlStateManager.enableBlend();
+			GL11.glEnable(GL11.GL_BLEND);
+			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+			GlStateManager.blendFunc(770, 771);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 0.8F);
+
+			//			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			//			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+			//			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			//			GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
 
 			//back
 			drawRect(xPosition, yPosition, xPosition + width, yPosition + height, 0x60000000);
@@ -89,9 +96,6 @@ public class GuiFXChart extends GuiButton {
 			}
 
 			//chart
-			//			drawRect(xPosition, yPosition + 10, xPosition + width, yPosition + height, 0xFF00FFFF);
-			//			drawLine(tessellator, xPosition, yPosition + 10, xPosition + width, yPosition + height);
-
 			if(dataList == null || FXCraft.rateGetter.hasUpdate(updateMills)){
 				List<RateData> list = FXCraft.rateGetter.getRateForChart(displayPair, displayTerm);
 				dataList = list;
@@ -115,14 +119,10 @@ public class GuiFXChart extends GuiButton {
 				double valueMargin = maxRate - minRate;
 				Calendar latest = dataList.get(dataList.size() - 1).calendar;
 				Calendar earliest = dataList.get(0).calendar;
-				//				long earliestMills = earliest.getTimeInMillis();
-				//				long termMargin = earliestMills - latest.getTimeInMillis();
 				int dataSize = dataList.size();
 				List<VertexCoord> coordList = Lists.newArrayList();
 				for (int index = 0; index < dataSize; index++){
 					RateData data = dataList.get(index);
-					//					long margin = earliestMills - data.calendar.getTimeInMillis();
-					//					double x = xPosition + effWidth - ((double) margin / termMargin) * effWidth;
 					double x = xPosition + effWidth - ((double) index / dataSize) * effWidth;
 					double y = yPosition + (maxRate - data.open) / valueMargin * effHeight;
 					coordList.add(new VertexCoord(x, y, data));
@@ -155,7 +155,7 @@ public class GuiFXChart extends GuiButton {
 					}
 				}
 			}else{
-				Minecraft.getMinecraft().fontRendererObj.drawString("This chart is not loaded", xPosition + (int) (width / 2f) - 76, yPosition + (int) (height / 2f) - 8, 0xFFFFFF, false);
+				fontrenderer.drawString("This chart is not loaded", xPosition + (int) (width / 2f) - 76, yPosition + (int) (height / 2f) - 8, 0xFFFFFF, false);
 			}
 
 			mouseDragged(minecraft, mouseX, mouseY);
@@ -168,7 +168,7 @@ public class GuiFXChart extends GuiButton {
 			}
 			fontrenderer.drawString(displayString, xPosition + width / 2 - fontrenderer.getStringWidth(displayString) / 2, yPosition + (height - 8) / 2, color, false);
 
-			GL11.glPopAttrib();
+			GlStateManager.popAttrib();
 		}
 	}
 
@@ -205,123 +205,32 @@ public class GuiFXChart extends GuiButton {
 
 	public static void drawLines(List<VertexCoord> vertexList, int color) {
 		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 		float f3 = (color >> 24 & 255) / 255.0F;
 		float f = (color >> 16 & 255) / 255.0F;
 		float f1 = (color >> 8 & 255) / 255.0F;
 		float f2 = (color & 255) / 255.0F;
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-		GL11.glColor4f(f, f1, f2, f3);
-		tessellator.startDrawing(GL11.GL_LINE_STRIP);
+		GlStateManager.pushAttrib();
+		GlStateManager.enableBlend();
+		GlStateManager.disableTexture2D();
+		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+		GlStateManager.color(f, f1, f2, f3);
+		//		GL11.glEnable(GL11.GL_BLEND);
+		//		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		//		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		//		GL11.glColor4f(f, f1, f2, f3);
+		worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
 		for (VertexCoord coords : vertexList){
-			tessellator.addVertex(coords.x, coords.y, 0.0D);
+			worldRenderer.pos(coords.x, coords.y, 0.0).endVertex();
 		}
 		tessellator.draw();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_BLEND);
+		GlStateManager.popAttrib();
+		//		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		//		GL11.glDisable(GL11.GL_BLEND);
 	}
-
-	/**params: coords from xPosition, yPosition*/
-	public static void drawLine(Tessellator tessellator, double startX, double startY, double endX, double endY) {
-		double j1;
-
-		//		if(startX < endX){
-		//			j1 = startX;
-		//			startX = endX;
-		//			endX = j1;
-		//		}
-		//
-		//		if(startY < endY){
-		//			j1 = startY;
-		//			startY = endY;
-		//			endY = j1;
-		//		}
-
-		int color = 0xFF7fff00;
-
-		float f3 = (color >> 24 & 255) / 255.0F;
-		float f = (color >> 16 & 255) / 255.0F;
-		float f1 = (color >> 8 & 255) / 255.0F;
-		float f2 = (color & 255) / 255.0F;
-		Tessellator tessellator = Tessellator.getInstance();
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-		GL11.glColor4f(f, f1, f2, f3);
-		tessellator.startDrawing(GL11.GL_LINE_STRIP);
-		//		tessellator2.addVertex((double) startX, (double) endY, 0.0D);
-		//		tessellator2.addVertex((double) endX, (double) endY, 0.0D);
-		//		tessellator2.addVertex((double) endX, (double) startY, 0.0D);
-		//		tessellator2.addVertex((double) startX, (double) startY, 0.0D);
-		tessellator.addVertex(startX, startY, 0.0D);
-		tessellator.addVertex(endX, endY, 0.0D);
-		tessellator.draw();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_BLEND);
-	}
-
-	//	private void drawMiniString(String str, int x, int y, int color) {
-	//		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-	//		GL11.glEnable(GL11.GL_BLEND);
-	//		GL11.glDisable(GL11.GL_LIGHTING);
-	//		GL11.glDisable(GL11.GL_CULL_FACE);
-	//		GL11.glDepthMask(true);
-	//		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-	//		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-	//		Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
-	//		for (int i = 0; i < str.length(); i++){
-	//			char c = str.charAt(i);
-	//			switch (c) {
-	//			case '0':
-	//				drawTexturedModalRect(x + i * 4, y, 0, 0, 3, 6);
-	//				break;
-	//			case '1':
-	//				drawTexturedModalRect(x + i * 4, y, 4, 0, 3, 6);
-	//				break;
-	//			case '2':
-	//				drawTexturedModalRect(x + i * 4, y, 8, 0, 3, 6);
-	//				break;
-	//			case '3':
-	//				drawTexturedModalRect(x + i * 4, y, 12, 0, 3, 6);
-	//				break;
-	//			case '4':
-	//				drawTexturedModalRect(x + i * 4, y, 16, 0, 3, 6);
-	//				break;
-	//			case '5':
-	//				drawTexturedModalRect(x + i * 4, y, 20, 0, 3, 6);
-	//				break;
-	//			case '6':
-	//				drawTexturedModalRect(x + i * 4, y, 24, 0, 3, 6);
-	//				break;
-	//			case '7':
-	//				drawTexturedModalRect(x + i * 4, y, 28, 0, 3, 6);
-	//				break;
-	//			case '8':
-	//				drawTexturedModalRect(x + i * 4, y, 32, 0, 3, 6);
-	//				break;
-	//			case '9':
-	//				drawTexturedModalRect(x + i * 4, y, 36, 0, 3, 6);
-	//				break;
-	//			case '.':
-	//				drawTexturedModalRect(x + i * 4, y, 40, 0, 3, 6);
-	//				break;
-	//			case '/':
-	//				drawTexturedModalRect(x + i * 4, y, 44, 0, 3, 6);
-	//				break;
-	//			case '_':
-	//				drawTexturedModalRect(x + i * 4, y, 48, 0, 3, 6);
-	//				break;
-	//			case ':':
-	//				drawTexturedModalRect(x + i * 4, y, 52, 0, 3, 6);
-	//				break;
-	//			}
-	//		}
-	//		GL11.glPopAttrib();
-	//	}
 
 	@Override
-	public void playPressSound(SoundHandler p_146113_1_) {}
+	public void playPressSound(SoundHandler soundHandler) {}
 
 	public class VertexCoord {
 		final double x;

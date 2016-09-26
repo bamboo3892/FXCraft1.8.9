@@ -1,0 +1,6 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "fxcraft:blocks/eternal_storage_item"
+    }
+}

@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiFXRateBox extends GuiButton {
@@ -35,20 +35,27 @@ public class GuiFXRateBox extends GuiButton {
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
 		if(visible){
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			FontRenderer fontrenderer = minecraft.fontRendererObj;
-			minecraft.getTextureManager().bindTexture(TEXTURE);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 			int k = getHoverState(hovered);
+
+			GlStateManager.pushAttrib();
+			minecraft.getTextureManager().bindTexture(TEXTURE);
+			GlStateManager.enableBlend();
 			GL11.glEnable(GL11.GL_BLEND);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+			GlStateManager.blendFunc(770, 771);
+			//			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			//			GL11.glEnable(GL11.GL_BLEND);
+			//			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+			//			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 			if(selected){
-				GL11.glColor4f(selectedColor[0], selectedColor[1], selectedColor[2], 0.5F);
+				GlStateManager.color(selectedColor[0], selectedColor[1], selectedColor[2], 0.5F);
+				//				GL11.glColor4f(selectedColor[0], selectedColor[1], selectedColor[2], 0.5F);
 			}else{
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
+				//				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
 			}
 			int offsetX = 0;
 			int offsetY = 0;
@@ -64,7 +71,8 @@ public class GuiFXRateBox extends GuiButton {
 				drawTexturedModalRect(xPosition, yPosition, offsetX + 128 - width, offsetY + 128 - height, width, height);
 
 			}
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			//			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			mouseDragged(minecraft, mouseX, mouseY);
 
@@ -117,7 +125,8 @@ public class GuiFXRateBox extends GuiButton {
 			str = today.low + "";
 			fontrenderer.drawString(str, xPosition + width - fontrenderer.getStringWidth(str) - 2, yPosition + 57, 0xFFFFFF, false);
 
-			GL11.glPopAttrib();
+			GlStateManager.popAttrib();
+			//			GL11.glPopAttrib();
 		}
 	}
 

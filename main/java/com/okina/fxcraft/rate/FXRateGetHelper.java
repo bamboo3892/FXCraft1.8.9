@@ -122,7 +122,7 @@ public class FXRateGetHelper {
 				}
 			}
 		}catch (IOException e){
-			e.printStackTrace();
+			//			e.printStackTrace();
 		}
 		return null;
 	}
@@ -174,7 +174,7 @@ public class FXRateGetHelper {
 				}
 			}
 		}catch (IOException e){
-			e.printStackTrace();
+			//			e.printStackTrace();
 		}
 		return map;
 	}

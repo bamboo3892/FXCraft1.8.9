@@ -13,8 +13,6 @@ import com.okina.fxcraft.main.FXCraft;
 import com.okina.fxcraft.utils.ColoredString;
 import com.okina.fxcraft.utils.RenderingHelper;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,8 +21,12 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemCapitalistGuard extends ItemArmor implements IHUDItem, IHUDArmor, IToolTipUser {
 
@@ -34,7 +36,6 @@ public class ItemCapitalistGuard extends ItemArmor implements IHUDItem, IHUDArmo
 		super(material, renderId, 1);
 		setMaxStackSize(1);
 		setCreativeTab(FXCraft.FXCraftCreativeTab);
-		setTextureName(FXCraft.MODID + ":capitalist_guard");
 		setUnlocalizedName("fxcraft_capitalist_guard");
 	}
 
@@ -54,8 +55,8 @@ public class ItemCapitalistGuard extends ItemArmor implements IHUDItem, IHUDArmo
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof IAccountInfoContainer){
 			AccountInfo account = ((IAccountInfoContainer) tile).getAccountInfo();
 			if(account != null){
@@ -83,12 +84,12 @@ public class ItemCapitalistGuard extends ItemArmor implements IHUDItem, IHUDArmo
 				AccountInfo account = AccountHandler.instance.getAccountInfo(tag.getString("account"));
 				if(account != null){
 					tag.setDouble("balance", account.balance);
-					if(player.getHealth() < player.prevHealth){
-						float f = player.prevHealth - player.getHealth();
-						if(AccountHandler.instance.decBalance(tag.getString("account"), f * HEAL_COST)){
-							player.heal(f);
-						}
-					}
+					//					if(player.getHealth() < player.prevHealth){
+					//						float f = player.prevHealth - player.getHealth();
+					//						if(AccountHandler.instance.decBalance(tag.getString("account"), f * HEAL_COST)){
+					//							player.heal(f);
+					//						}
+					//					}
 				}else{
 					tag.setDouble("balance", 0);
 				}

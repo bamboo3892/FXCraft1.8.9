@@ -5,9 +5,7 @@ import net.minecraft.inventory.Container;
 
 public class DummyContainer extends Container {
 
-	public DummyContainer() {
-
-	}
+	public DummyContainer() {}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer p_75145_1_) {

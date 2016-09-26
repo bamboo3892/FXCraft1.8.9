@@ -108,7 +108,7 @@ public class SimpleTilePacket implements IMessage {
 			//			System.out.println(String.format("Received %s from %s", msg, ctx.side.SERVER));
 			if(Minecraft.getMinecraft().theWorld != null){
 				if(Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(msg.x, msg.y, msg.z)) instanceof ISimpleTilePacketUser){
-					IThreadListener mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+					IThreadListener mainThread = Minecraft.getMinecraft();
 					mainThread.addScheduledTask(new Runnable() {
 						@Override
 						public void run() {

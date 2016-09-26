@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=0": { "model": "fxcraft:eternal_storage_item" },
+        "type=1": { "model": "fxcraft:eternal_storage_energy" },
+        "type=2": { "model": "fxcraft:eternal_storage_fluid" }
+    }
+}

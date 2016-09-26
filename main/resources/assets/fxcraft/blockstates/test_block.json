@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "meta=0": { "model": "fxcraft:test_block0" },
+        "meta=1": { "model": "fxcraft:test_block1" }
+    }
+}

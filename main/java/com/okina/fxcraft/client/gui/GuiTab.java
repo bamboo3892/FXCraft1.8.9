@@ -2,14 +2,12 @@ package com.okina.fxcraft.client.gui;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import com.okina.fxcraft.main.FXCraft;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiTab<T extends GuiTabbedPane> extends GuiButton implements ITipComponent {
@@ -33,19 +31,34 @@ public abstract class GuiTab<T extends GuiTabbedPane> extends GuiButton implemen
 	@Override
 	public final void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
 		if(visible){
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			minecraft.getTextureManager().bindTexture(TEXTURE);
-			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glDisable(GL11.GL_LIGHTING);
-			GL11.glDisable(GL11.GL_CULL_FACE);
-			GL11.glDepthMask(true);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
+			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+
+			GlStateManager.pushAttrib();
+			Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+			GlStateManager.disableBlend();
+			GlStateManager.enableTexture2D();
+			GlStateManager.disableLighting();
+			GlStateManager.disableCull();
+			GlStateManager.enableDepth();
+			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+			GlStateManager.blendFunc(770, 771);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+			//			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			//			minecraft.getTextureManager().bindTexture(TEXTURE);
+			//			GL11.glEnable(GL11.GL_BLEND);
+			//			GL11.glDisable(GL11.GL_LIGHTING);
+			//			GL11.glDisable(GL11.GL_CULL_FACE);
+			//			GL11.glDepthMask(true);
+			//			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+			//			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+			//			GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 0.8F);
 			drawTexturedModalRect(xPosition, yPosition, textureIndexX * 24, textureIndexY * 22, width, height);
-			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			//			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if(!selected){
 				drawRect(xPosition, yPosition, xPosition + width, yPosition + height, 0x33000000);
@@ -60,7 +73,7 @@ public abstract class GuiTab<T extends GuiTabbedPane> extends GuiButton implemen
 
 			mouseDragged(minecraft, mouseX, mouseY);
 
-			GL11.glPopAttrib();
+			GlStateManager.popAttrib();
 		}
 	}
 
