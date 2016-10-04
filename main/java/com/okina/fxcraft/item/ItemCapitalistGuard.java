@@ -16,7 +16,6 @@ import com.okina.fxcraft.utils.RenderingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,7 +40,22 @@ public class ItemCapitalistGuard extends ItemArmor implements IHUDItem, IHUDArmo
 
 	@Override
 	public void onUpdate(ItemStack itemStack, World world, Entity entity, int slot, boolean equipped) {
-		if(equipped && !world.isRemote && entity instanceof EntityPlayerMP){
+		if(equipped && !world.isRemote){
+			NBTTagCompound tag = itemStack.getTagCompound();
+			if(tag != null){
+				AccountInfo account = AccountHandler.instance.getAccountInfo(tag.getString("account"));
+				if(account != null){
+					tag.setDouble("balance", account.balance);
+				}else{
+					tag.setDouble("balance", 0);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+		if(!world.isRemote){
 			NBTTagCompound tag = itemStack.getTagCompound();
 			if(tag != null){
 				AccountInfo account = AccountHandler.instance.getAccountInfo(tag.getString("account"));
@@ -76,26 +90,6 @@ public class ItemCapitalistGuard extends ItemArmor implements IHUDItem, IHUDArmo
 		return FXCraft.MODID + ":textures/models/armor/captalist_guard.png";
 	}
 
-	@Override
-	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
-		if(!world.isRemote){
-			NBTTagCompound tag = itemStack.getTagCompound();
-			if(tag != null){
-				AccountInfo account = AccountHandler.instance.getAccountInfo(tag.getString("account"));
-				if(account != null){
-					tag.setDouble("balance", account.balance);
-					//					if(player.getHealth() < player.prevHealth){
-					//						float f = player.prevHealth - player.getHealth();
-					//						if(AccountHandler.instance.decBalance(tag.getString("account"), f * HEAL_COST)){
-					//							player.heal(f);
-					//						}
-					//					}
-				}else{
-					tag.setDouble("balance", 0);
-				}
-			}
-		}
-	}
 
 	@SideOnly(Side.CLIENT)
 	@Override

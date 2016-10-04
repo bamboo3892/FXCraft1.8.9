@@ -2,6 +2,8 @@ package com.okina.fxcraft.client.gui.account_manager;
 
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import com.google.common.collect.Lists;
 import com.okina.fxcraft.account.AccountInfo;
 import com.okina.fxcraft.account.Reward;
@@ -53,9 +55,7 @@ public class RewardTab extends GuiTab<AccountManagerGui> {
 
 		GlStateManager.pushAttrib();
 		GlStateManager.enableBlend();
-		GlStateManager.disableLighting();
-		GlStateManager.disableCull();
-		GlStateManager.depthMask(true);
+		GL11.glEnable(GL11.GL_BLEND);
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 		GlStateManager.blendFunc(770, 771);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.8F);
@@ -79,12 +79,12 @@ public class RewardTab extends GuiTab<AccountManagerGui> {
 			}
 		}
 
+		if(selectedReward != null){
+			drawRect(selectedReward.xPosition - 1, selectedReward.yPosition - 1, selectedReward.xPosition + 17, selectedReward.yPosition + 17, 0x557fff00);
+		}
+
 		RenderingHelper.drawMiniString("YOU CAN GET", i + 1, j + 1, 0x7fff00);
 		RenderingHelper.drawMiniString("NEXT", i + 1, j + 45, 0x7fff00);
-
-		if(selectedReward != null){
-			drawRect(selectedReward.xPosition - 1, selectedReward.yPosition - 1, selectedReward.xPosition + 17, selectedReward.yPosition + 17, 0x337fff00);
-		}
 
 		GlStateManager.popAttrib();
 		//		GL11.glPopAttrib();

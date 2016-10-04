@@ -104,7 +104,7 @@ public abstract class Reward {
 
 		private static final int[] LOSS = { 10, 30, 50, 100, 300 };
 		private static final String[] LOSS_STR = { "慰めの報酬１", "慰めの報酬２", "慰めの報酬３", "慰めの報酬４", "慰めの報酬５" };
-		private static final ItemStack[] LOSS_ITEM = { new ItemStack(Items.emerald, 1), new ItemStack(Items.emerald, 3), new ItemStack(Items.emerald, 5), new ItemStack(Items.emerald, 7), new ItemStack(Items.emerald, 10) };
+		private static final ItemStack[] LOSS_ITEM = { new ItemStack(Items.emerald, 1), new ItemStack(FXCraft.eternalStorage, 1), new ItemStack(Items.emerald, 5), new ItemStack(Items.emerald, 7), new ItemStack(Items.emerald, 10) };
 		public static final Reward[] TOTAL_LOSS = new Reward[LOSS.length];
 		static{
 			for (int i = 0; i < LOSS.length; i++){

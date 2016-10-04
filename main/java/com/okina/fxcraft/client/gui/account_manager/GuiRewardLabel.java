@@ -2,12 +2,16 @@ package com.okina.fxcraft.client.gui.account_manager;
 
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import com.google.common.collect.Lists;
 import com.okina.fxcraft.account.Reward;
 import com.okina.fxcraft.client.gui.GuiIconLabel;
+import com.okina.fxcraft.utils.RenderingHelper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderItem;
 
 public class GuiRewardLabel extends GuiIconLabel {
@@ -29,19 +33,18 @@ public class GuiRewardLabel extends GuiIconLabel {
 			FontRenderer fontrenderer = minecraft.fontRendererObj;
 			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 
-			//			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			//			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			//			GL11.glEnable(GL11.GL_BLEND);
-			//			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			//			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
 			if(hovered){
-				drawRect(xPosition, yPosition, xPosition + width, yPosition + height, 0x33000000);
+				GlStateManager.pushAttrib();
+				GlStateManager.enableBlend();
+				GL11.glEnable(GL11.GL_BLEND);
+				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+				GlStateManager.blendFunc(770, 771);
+				GlStateManager.color(0.0F, 0.0F, 0.0F, 0.5F);
+				RenderingHelper.drawRect(xPosition, yPosition, width, height);
+				GlStateManager.popAttrib();
 			}
 
 			mouseDragged(minecraft, mouseX, mouseY);
-
-			//			GL11.glPopAttrib();
 		}
 		super.drawButton(minecraft, mouseX, mouseY);
 	}

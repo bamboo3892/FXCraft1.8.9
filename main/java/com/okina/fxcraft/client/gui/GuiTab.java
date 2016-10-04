@@ -2,6 +2,8 @@ package com.okina.fxcraft.client.gui;
 
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import com.okina.fxcraft.main.FXCraft;
 
 import net.minecraft.client.Minecraft;
@@ -36,7 +38,8 @@ public abstract class GuiTab<T extends GuiTabbedPane> extends GuiButton implemen
 
 			GlStateManager.pushAttrib();
 			Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
-			GlStateManager.disableBlend();
+			GlStateManager.enableBlend();
+			GL11.glEnable(GL11.GL_BLEND);
 			GlStateManager.enableTexture2D();
 			GlStateManager.disableLighting();
 			GlStateManager.disableCull();

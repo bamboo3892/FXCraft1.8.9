@@ -176,6 +176,17 @@ public final class RenderingHelper {
 		tessellator.draw();
 	}
 
+	public static void drawRect(int x, int y, int width, int height) {
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+		worldrenderer.begin(7, DefaultVertexFormats.POSITION);
+		worldrenderer.pos(x + 0, y + height, 0).endVertex();
+		worldrenderer.pos(x + width, y + height, 0).endVertex();
+		worldrenderer.pos(x + width, y + 0, 0).endVertex();
+		worldrenderer.pos(x + 0, y + 0, 0).endVertex();
+		tessellator.draw();
+	}
+
 	public static void renderHUDCenter(Minecraft mc, List<ColoredString> list) {
 		if(list != null && !list.isEmpty()){
 			ScaledResolution sr = new ScaledResolution(mc);

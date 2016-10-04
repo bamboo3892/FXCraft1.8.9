@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.okina.fxcraft.client.IHUDBlock;
 import com.okina.fxcraft.utils.ColoredString;
 import com.okina.fxcraft.utils.InfinitEnergyStorage;
+import com.okina.fxcraft.utils.InfinitInteger;
 import com.okina.fxcraft.utils.RenderingHelper;
 
 import cofh.api.energy.IEnergyProvider;
@@ -23,7 +24,7 @@ public class EternalStorageEnergyTileEntity extends TileEntity implements IEnerg
 	public InfinitEnergyStorage storage = new InfinitEnergyStorage();
 
 	public EternalStorageEnergyTileEntity() {
-		//		storage.energy = new InfinitInteger(Integer.MAX_VALUE);
+		storage.energy = new InfinitInteger(Integer.MAX_VALUE);
 	}
 
 	@Override

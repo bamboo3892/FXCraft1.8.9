@@ -35,6 +35,9 @@ public class EternalStorageItemTileEntity extends TileEntity implements IInvento
 	@Override
 	public void update() {
 		updateInventory();
+		if(!worldObj.isRemote){
+			markDirty();
+		}
 	}
 
 	public void updateInventory() {
@@ -131,7 +134,7 @@ public class EternalStorageItemTileEntity extends TileEntity implements IInvento
 			}
 			item = stack;
 		}else{
-			if(item.equals(stack) && ItemStack.areItemStackTagsEqual(item, stack)){
+			if(item.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(item, stack)){
 				this.inventory[index] = stack;
 				if(stack != null && stack.stackSize > this.getInventoryStackLimit()){
 					stack.stackSize = this.getInventoryStackLimit();
@@ -148,6 +151,7 @@ public class EternalStorageItemTileEntity extends TileEntity implements IInvento
 		}
 		item = null;
 		itemCount = InfinitInteger.ZERO;
+		this.markDirty();
 	}
 
 	//	@Override
@@ -244,7 +248,7 @@ public class EternalStorageItemTileEntity extends TileEntity implements IInvento
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack stack) {
 		if(item != null){
-			if(stack != null && index >= 0 && index < 8){
+			if(stack != null && index >= 0 && index < inventory.length){
 				return item.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(item, stack);
 			}
 			return false;

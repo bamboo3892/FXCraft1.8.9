@@ -75,10 +75,11 @@ public class CommonProxy {
 		String name = eternalStorage.getUnlocalizedName().substring(5);
 		GameRegistry.registerBlock(eternalStorage, ItemBlockEternalStorage.class, name);
 		if(FMLCommonHandler.instance().getSide().isClient()){
-			ModelBakery.addVariantName(Item.getItemFromBlock(eternalStorage), MODID + ":" + name + "_item", MODID + ":" + name + "_energy", MODID + ":" + name + "_fluid");
+			//			ModelBakery.addVariantName(Item.getItemFromBlock(eternalStorage), MODID + ":" + name + "_item", MODID + ":" + name + "_energy", MODID + ":" + name + "_fluid");
+			ModelBakery.addVariantName(Item.getItemFromBlock(eternalStorage), MODID + ":" + name + "_item");
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(eternalStorage), 0, new ModelResourceLocation(MODID + ":" + name + "_item", "invenotry"));
-			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(eternalStorage), 1, new ModelResourceLocation(MODID + ":" + name + "_energy", "invenotry"));
-			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(eternalStorage), 2, new ModelResourceLocation(MODID + ":" + name + "_fluid", "invenotry"));
+			//			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(eternalStorage), 1, new ModelResourceLocation(MODID + ":" + name + "_energy", "invenotry"));
+			//			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(eternalStorage), 2, new ModelResourceLocation(MODID + ":" + name + "_fluid", "invenotry"));
 		}
 
 		//		test = new TestBlock();

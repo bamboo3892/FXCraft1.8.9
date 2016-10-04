@@ -48,6 +48,10 @@ public class BlockEternalStorage extends BlockContainer implements IToolTipUser 
 
 	@Override
 	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+		if(playerIn.getCurrentEquippedItem() != null && playerIn.getCurrentEquippedItem().canHarvestBlock(this)){
+			return;
+		}
+
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if(tile instanceof EternalStorageItemTileEntity){
 			EternalStorageItemTileEntity storage = (EternalStorageItemTileEntity) tile;
@@ -69,7 +73,7 @@ public class BlockEternalStorage extends BlockContainer implements IToolTipUser 
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if(tile instanceof EternalStorageItemTileEntity){
 			EternalStorageItemTileEntity storage = (EternalStorageItemTileEntity) tile;
-			if(System.currentTimeMillis() - storage.lastClickedTime < 400){//store all item player has
+			if(System.currentTimeMillis() - storage.lastClickedTime < 200){//store all item player has
 				ItemStack stored = storage.item;
 				if(stored != null){
 					int count = playerIn.inventory.clearMatchingItems(stored.getItem(), stored.getMetadata(), -1, stored.getTagCompound());
@@ -86,8 +90,7 @@ public class BlockEternalStorage extends BlockContainer implements IToolTipUser 
 				storage.lastClickedTime = System.currentTimeMillis();
 			}
 		}
-
-		return false;
+		return true;
 	}
 
 	@Override
@@ -107,14 +110,12 @@ public class BlockEternalStorage extends BlockContainer implements IToolTipUser 
 
 	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te) {
 		ItemStack item = new ItemStack(this, 1, state.getValue(TYPE));
-		if(te instanceof EternalStorageItemTileEntity){
-			NBTTagCompound tag = new NBTTagCompound();
-			NBTTagCompound blockTag = new NBTTagCompound();
-			te.writeToNBT(blockTag);
-			tag.setTag("BlockEntityTag", blockTag);
-			item.setTagCompound(tag);
-			spawnAsEntity(worldIn, pos, item);
-		}
+		NBTTagCompound tag = new NBTTagCompound();
+		NBTTagCompound blockTag = new NBTTagCompound();
+		te.writeToNBT(blockTag);
+		tag.setTag("BlockEntityTag", blockTag);
+		item.setTagCompound(tag);
+		spawnAsEntity(worldIn, pos, item);
 		super.harvestBlock(worldIn, player, pos, state, te);
 	}
 
@@ -130,8 +131,8 @@ public class BlockEternalStorage extends BlockContainer implements IToolTipUser 
 	@Override
 	public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
 		super.getSubBlocks(itemIn, tab, list);
-		list.add(new ItemStack(itemIn, 1, 1));
-		list.add(new ItemStack(itemIn, 1, 2));
+		//		list.add(new ItemStack(itemIn, 1, 1));
+		//		list.add(new ItemStack(itemIn, 1, 2));
 	}
 
 	@Override

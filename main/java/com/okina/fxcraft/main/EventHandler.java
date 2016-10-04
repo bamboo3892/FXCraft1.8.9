@@ -4,10 +4,13 @@ import static com.okina.fxcraft.main.FXCraft.*;
 
 import org.lwjgl.input.Keyboard;
 
+import com.okina.fxcraft.account.AccountHandler;
+import com.okina.fxcraft.account.AccountInfo;
 import com.okina.fxcraft.client.IHUDArmor;
 import com.okina.fxcraft.client.IHUDBlock;
 import com.okina.fxcraft.client.IHUDItem;
 import com.okina.fxcraft.client.IToolTipUser;
+import com.okina.fxcraft.item.ItemCapitalistGuard;
 import com.okina.fxcraft.main.CommonProxy.PopUpMessage;
 import com.okina.fxcraft.utils.UtilMethods;
 
@@ -21,17 +24,18 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.event.entity.player.EntityInteractEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 
 public class EventHandler {
 
@@ -69,11 +73,28 @@ public class EventHandler {
 		}
 	}
 
-	@SubscribeEvent
-	public void registerOreEvent(final OreRegisterEvent event) {}
-
-	@SubscribeEvent
-	public void interactTest(EntityInteractEvent event) {}
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onLivingAttack(LivingAttackEvent event) {
+		if(FMLCommonHandler.instance().getEffectiveSide().isServer()){
+			if(event.isCancelable() && !event.isCanceled()){
+				ItemStack armor = event.entityLiving.getEquipmentInSlot(3);
+				if(armor != null && armor.getItem() == FXCraft.capitalist_guard){
+					NBTTagCompound tag = armor.getTagCompound();
+					if(tag != null){
+						AccountInfo account = AccountHandler.instance.getAccountInfo(tag.getString("account"));
+						if(account != null){
+							tag.setDouble("balance", account.balance);
+							if(AccountHandler.instance.decBalance(tag.getString("account"), event.ammount * ItemCapitalistGuard.HEAL_COST)){
+								event.setCanceled(true);
+							}
+						}else{
+							tag.setDouble("balance", 0);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onServerTick(TickEvent.ServerTickEvent event) {
